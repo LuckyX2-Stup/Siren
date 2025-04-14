@@ -19,4 +19,4 @@ jobs:
       - name: deploy
         uses: cloudflare/wrangler-action@v3
         with:
-          apiToken: GeUgLb5a9tsqbUGskrSAGVnr0jBQpzUrpoy_jGU_
+          apiToken: RQYKPajfC2M740VqBu86_aprOOZ0rjca3wnzJq--
