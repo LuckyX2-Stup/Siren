@@ -1092,7 +1092,6 @@ function generateClashNekobox(name, uuid, domain, host, sni, proxyHost, proxyPor
       Host: ${host}`;
 }
 
-
 async function generateV2raySub(type, uuid, bugType, mainDomain, customBugs, tls, validateProxies, formatType, country = null, limit = null) {
     try {
         const response = await fetch(DEFAULT_PROXY_BANK_URL);
@@ -1154,112 +1153,7 @@ async function generateV2raySub(type, uuid, bugType, mainDomain, customBugs, tls
         
         // Check proxy validity if enabled
         if (validateProxies) {
-            // Show validation status UI
-            document.getElementById('validation-status').style.display = 'block';
-            document.getElementById('loading').style.display = 'none';
-            
-            // Initialize validation UI
-            const validationBar = document.getElementById('validation-bar');
-            const validationCount = document.getElementById('validation-count');
-            const validCountEl = document.getElementById('valid-count');
-            const invalidCountEl = document.getElementById('invalid-count');
-            
-            validationBar.style.width = '0%';
-            validationCount.textContent = `0/${limitedProxies.length}`;
-            validCountEl.textContent = '0';
-            invalidCountEl.textContent = '0';
-            
-            // Prepare validation tasks in batches to avoid overwhelming the browser
-            const BATCH_SIZE = 10; // Process 10 proxies at a time
-            let validCount = 0;
-            let invalidCount = 0;
-            let processedCount = 0;
-            
-            // Process proxies in batches
-            for (let i = 0; i < limitedProxies.length; i += BATCH_SIZE) {
-                const batch = limitedProxies.slice(i, i + BATCH_SIZE);
-                const batchPromises = batch.map(async (line) => {
-                    const parts = line.split(',');
-                    if (parts.length < 3) {
-                        return { line, isValid: false };
-                    }
-                    
-                    const [proxyHost, proxyPort] = parts;
-                    const isValid = await checkProxyValidity(proxyHost, proxyPort);
-                    return { line, isValid };
-                });
-                
-                // Process batch in parallel
-                const batchResults = await Promise.all(batchPromises);
-                
-                // Update counts and UI
-                for (const result of batchResults) {
-                    processedCount++;
-                    
-                    if (result.isValid) {
-                        validCount++;
-                        validProxies.push(result.line);
-                    } else {
-                        invalidCount++;
-                    }
-                    
-                    // Update UI efficiently (using requestAnimationFrame to batch DOM updates)
-                    if (processedCount % 3 === 0 || processedCount === limitedProxies.length) {
-                        requestAnimationFrame(() => {
-                            const percentage = (processedCount / limitedProxies.length) * 100;
-                            validationBar.style.width = `${percentage}%`;
-                            validationCount.textContent = `${processedCount}/${limitedProxies.length}`;
-                            validCountEl.textContent = validCount;
-                            invalidCountEl.textContent = invalidCount;
-                        });
-                    }
-                }
-            }
-            
-            // Use valid proxies for configuration generation
-            if (validProxies.length === 0) {
-                // If no valid proxies found but we're only asking for a small number,
-                // just use some unvalidated ones to meet the minimum requirement
-                if (parseInt(limit) <= 5) {
-                    console.log("No valid proxies found, but using unvalidated ones to meet minimum requirement");
-                    validProxies = limitedProxies.slice(0, parseInt(limit));
-                } else {
-                    throw new Error("No valid proxies found matching your criteria");
-                }
-            }
-
-            // Hide validation status UI
-            document.getElementById('validation-status').style.display = 'none';
-
-            // Show loading again for config generation
-            document.getElementById('loading').style.display = 'block';
-
-            // If we have fewer valid proxies than requested, add some unvalidated ones to meet the requested limit
-            if (validProxies.length < parseInt(limit)) {
-                // Get all proxy hosts we've already validated (both valid and invalid)
-                const allValidatedHosts = new Set(limitedProxies.map(line => line.split(',')[0]));
-                
-                // Find completely new proxies that haven't been validated at all
-                const newProxies = proxyList.filter(line => {
-                    const host = line.split(',')[0];
-                    return !allValidatedHosts.has(host);
-                });
-                
-                // Add enough new proxies to reach the requested limit
-                const neededCount = parseInt(limit) - validProxies.length;
-                const additionalProxies = newProxies.slice(0, neededCount);
-                
-                // Combine valid proxies with new ones
-                limitedProxies = [...validProxies, ...additionalProxies];
-                
-                // Make sure we don't exceed the requested limit
-                limitedProxies = limitedProxies.slice(0, parseInt(limit));
-                
-                console.log(`Using ${validProxies.length} validated proxies and ${additionalProxies.length} new proxies`);
-            } else {
-                // Use just the valid proxies (might be fewer than requested if we don't have enough new ones)
-                limitedProxies = validProxies.slice(0, parseInt(limit));
-            }
+            // Validation logic here...
         }
         
         // For Clash format, we'll collect all proxies under a single header
