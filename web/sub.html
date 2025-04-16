@@ -1472,7 +1472,7 @@ async function generateV2raySub(type, uuid, bugType, mainDomain, customBugs, tls
                     }
                     
                     const bugLabel = bug !== mainDomain ? `[${bug}]` : '';
-                    const name = `${emojiFlag} (${countryCode}) ${sanitizedIsp} ${bugLabel} ${i+1}`;
+                    const name = `(${countryCode}) ${sanitizedIsp} ${bugLabel} ${i+1}`;
                     
                     switch (type) {
                         case 'vless':
@@ -1687,7 +1687,7 @@ ${allProxies.join(',\n')},
                     }
                     
                     const bugLabel = bug !== mainDomain ? `[${bug}]` : '';
-                    const name = `${emojiFlag} (${countryCode}) ${sanitizedIsp} ${bugLabel} ${i+1}`;
+                    const name = `(${countryCode}) ${sanitizedIsp} ${bugLabel} ${i+1}`;
                     
                     switch (type) {
                         case 'vless':
