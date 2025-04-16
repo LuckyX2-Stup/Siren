@@ -1444,7 +1444,6 @@ async function generateV2raySub(type, uuid, bugType, mainDomain, customBugs, tls
                 
                 const [proxyHost, proxyPort, countryCode, ...ispParts] = parts;
                 const isp = ispParts.join(' ') || 'Unknown';
-                const emojiFlag = getEmojiFlag(countryCode);
                 const sanitizedIsp = isp.replace(/[\n\r]+/g, "").trim();
                 
                 // If we have multiple bugs, create configs for each bug
@@ -1660,7 +1659,6 @@ ${allProxies.join(',\n')},
                 
                 const [proxyHost, proxyPort, countryCode, ...ispParts] = parts;
                 const isp = ispParts.join(' ') || 'Unknown';
-                const emojiFlag = getEmojiFlag(countryCode);
                 const sanitizedIsp = isp.replace(/[\n\r]+/g, "").trim();
                 
                 // If we have multiple bugs, create configs for each bug
