@@ -979,8 +979,8 @@ select.form-control {
         }
     }
     
-    // Generate Clash YAML for VLESS
-    function generateClashVLESS(name, uuid, domain, host, sni, proxyHost, proxyPort, tls) {
+// Generate Clash YAML for VLESS
+function generateClashVLESS(name, uuid, domain, host, sni, proxyHost, proxyPort, tls) {
     return `- name: ${name}
   server: ${domain}
   port: ${tls ? 443 : 80}
@@ -998,8 +998,8 @@ select.form-control {
       Host: ${host}`;
 }
 
-    // Generate Clash YAML for Trojan
-    function generateClashTrojan(name, uuid, domain, host, sni, proxyHost, proxyPort, tls) {
+// Generate Clash YAML for Trojan
+function generateClashTrojan(name, uuid, domain, host, sni, proxyHost, proxyPort, tls) {
     return `- name: ${name}
   server: ${domain}
   port: ${tls ? 443 : 80}
@@ -1015,8 +1015,8 @@ select.form-control {
       Host: ${host}`;
 }
 
-    // Generate Clash YAML for Shadowsocks
-    function generateClashSS(name, uuid, domain, host, sni, proxyHost, proxyPort, tls) {
+// Generate Clash YAML for Shadowsocks
+function generateClashSS(name, uuid, domain, host, sni, proxyHost, proxyPort, tls) {
     return `- name: ${name}
   server: ${domain}
   port: ${tls ? 443 : 80}
@@ -1040,8 +1040,8 @@ select.form-control {
     v2ray-http-upgrade-fast-open: false`;
 }
 
-    // Generate Clash YAML for VMess
-    function generateClashVMess(name, uuid, domain, host, sni, proxyHost, proxyPort, tls) {
+// Generate Clash YAML for VMess
+function generateClashVMess(name, uuid, domain, host, sni, proxyHost, proxyPort, tls) {
     return `- name: ${name}
   server: ${domain}
   port: ${tls ? 443 : 80}
@@ -1060,38 +1060,142 @@ select.form-control {
   udp: true`;
 }
 
-
-function generateClashSingbox(name, uuid, domain, host, sni, proxyHost, proxyPort, tls) {
-    return `- name: ${name}
-  server: ${domain}
-  port: ${tls ? 443 : 80}
-  type: singbox
-  uuid: ${uuid}
-  tls: ${tls}
-  network: ws
-  servername: ${sni}
-  ws-opts:
-    path: /${PATH_PREFIX}/${proxyHost}-${proxyPort}
-    headers:
-      Host: ${host}`;
+// Generate Singbox configuration
+function generateSingboxConfig(name, uuid, domain, host, sni, proxyHost, proxyPort, tls, type) {
+    const ports = tls ? '443' : '80';
+    const snio = tls ? `\n      "tls": {\n        "enabled": true,\n        "server_name": "${sni}",\n        "insecure": true\n      },` : '';
+    
+    let config = '';
+    if (type === 'vless') {
+        config = `    {
+      "type": "vless",
+      "tag": "${name}",
+      "domain_strategy": "ipv4_only",
+      "server": "${domain}",
+      "server_port": ${ports},
+      "uuid": "${uuid}",${snio}
+      "multiplex": {
+        "protocol": "smux",
+        "max_streams": 32
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/${PATH_PREFIX}/${proxyHost}-${proxyPort}",
+        "headers": {
+          "Host": "${host}"
+        },
+        "early_data_header_name": "Sec-WebSocket-Protocol"
+      },
+      "packet_encoding": "xudp"
+    }`;
+    } else if (type === 'trojan') {
+        config = `    {
+      "type": "trojan",
+      "tag": "${name}",
+      "domain_strategy": "ipv4_only",
+      "server": "${domain}",
+      "server_port": ${ports},
+      "password": "${uuid}",${snio}
+      "multiplex": {
+        "protocol": "smux",
+        "max_streams": 32
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/${PATH_PREFIX}/${proxyHost}-${proxyPort}",
+        "headers": {
+          "Host": "${host}"
+        },
+        "early_data_header_name": "Sec-WebSocket-Protocol"
+      }
+    }`;
+    } else if (type === 'ss') {
+        config = `    {
+      "type": "shadowsocks",
+      "tag": "${name}",
+      "server": "${domain}",
+      "server_port": 443,
+      "method": "none",
+      "password": "${uuid}",
+      "plugin": "v2ray-plugin",
+      "plugin_opts": "mux=0;path=/${PATH_PREFIX}/${proxyHost}-${proxyPort};host=${host};tls=${tls ? '1' : '0'}"
+    }`;
+    }
+    
+    return config;
 }
 
-
-function generateClashNekobox(name, uuid, domain, host, sni, proxyHost, proxyPort, tls) {
-    return `- name: ${name}
-  server: ${domain}
-  port: ${tls ? 443 : 80}
-  type: nekobox
-  uuid: ${uuid}
-  tls: ${tls}
-  network: ws
-  servername: ${sni}
-  ws-opts:
-    path: /${PATH_PREFIX}/${proxyHost}-${proxyPort}
-    headers:
-      Host: ${host}`;
+// Generate Nekobox configuration
+function generateNekoboxConfig(name, uuid, domain, host, sni, proxyHost, proxyPort, tls, type) {
+    const ports = tls ? '443' : '80';
+    const snio = tls ? `\n      "tls": {\n        "disable_sni": false,\n        "enabled": true,\n        "insecure": true,\n        "server_name": "${sni}"\n      },` : '';
+    
+    let config = '';
+    if (type === 'vless') {
+        config = `    {
+      "domain_strategy": "ipv4_only",
+      "flow": "",
+      "multiplex": {
+        "enabled": false,
+        "max_streams": 32,
+        "protocol": "smux"
+      },
+      "packet_encoding": "xudp",
+      "server": "${domain}",
+      "server_port": ${ports},
+      "tag": "${name}",${snio}
+      "transport": {
+        "early_data_header_name": "Sec-WebSocket-Protocol",
+        "headers": {
+          "Host": "${host}"
+        },
+        "max_early_data": 0,
+        "path": "/${PATH_PREFIX}/${proxyHost}-${proxyPort}",
+        "type": "ws"
+      },
+      "type": "vless",
+      "uuid": "${uuid}"
+    }`;
+    } else if (type === 'trojan') {
+        config = `    {
+      "domain_strategy": "ipv4_only",
+      "multiplex": {
+        "enabled": false,
+        "max_streams": 32,
+        "protocol": "smux"
+      },
+      "password": "${uuid}",
+      "server": "${domain}",
+      "server_port": ${ports},
+      "tag": "${name}",${snio}
+      "transport": {
+        "early_data_header_name": "Sec-WebSocket-Protocol",
+        "headers": {
+          "Host": "${host}"
+        },
+        "max_early_data": 0,
+        "path": "/${PATH_PREFIX}/${proxyHost}-${proxyPort}",
+        "type": "ws"
+      },
+      "type": "trojan"
+    }`;
+    } else if (type === 'ss') {
+        config = `    {
+      "type": "shadowsocks",
+      "tag": "${name}",
+      "server": "${domain}",
+      "server_port": 443,
+      "method": "none",
+      "password": "${uuid}",
+      "plugin": "v2ray-plugin",
+      "plugin_opts": "mux=0;path=/${PATH_PREFIX}/${proxyHost}-${proxyPort};host=${host};tls=${tls ? '1' : '0'}"
+    }`;
+    }
+    
+    return config;
 }
 
+// Main Function
 async function generateV2raySub(type, uuid, bugType, mainDomain, customBugs, tls, validateProxies, formatType, country = null, limit = null) {
     try {
         const response = await fetch(DEFAULT_PROXY_BANK_URL);
@@ -1153,7 +1257,112 @@ async function generateV2raySub(type, uuid, bugType, mainDomain, customBugs, tls
         
         // Check proxy validity if enabled
         if (validateProxies) {
-            // Validation logic here...
+            // Show validation status UI
+            document.getElementById('validation-status').style.display = 'block';
+            document.getElementById('loading').style.display = 'none';
+            
+            // Initialize validation UI
+            const validationBar = document.getElementById('validation-bar');
+            const validationCount = document.getElementById('validation-count');
+            const validCountEl = document.getElementById('valid-count');
+            const invalidCountEl = document.getElementById('invalid-count');
+            
+            validationBar.style.width = '0%';
+            validationCount.textContent = `0/${limitedProxies.length}`;
+            validCountEl.textContent = '0';
+            invalidCountEl.textContent = '0';
+            
+            // Prepare validation tasks in batches to avoid overwhelming the browser
+            const BATCH_SIZE = 10; // Process 10 proxies at a time
+            let validCount = 0;
+            let invalidCount = 0;
+            let processedCount = 0;
+            
+            // Process proxies in batches
+            for (let i = 0; i < limitedProxies.length; i += BATCH_SIZE) {
+                const batch = limitedProxies.slice(i, i + BATCH_SIZE);
+                const batchPromises = batch.map(async (line) => {
+                    const parts = line.split(',');
+                    if (parts.length < 3) {
+                        return { line, isValid: false };
+                    }
+                    
+                    const [proxyHost, proxyPort] = parts;
+                    const isValid = await checkProxyValidity(proxyHost, proxyPort);
+                    return { line, isValid };
+                });
+                
+                // Process batch in parallel
+                const batchResults = await Promise.all(batchPromises);
+                
+                // Update counts and UI
+                for (const result of batchResults) {
+                    processedCount++;
+                    
+                    if (result.isValid) {
+                        validCount++;
+                        validProxies.push(result.line);
+                    } else {
+                        invalidCount++;
+                    }
+                    
+                    // Update UI efficiently (using requestAnimationFrame to batch DOM updates)
+                    if (processedCount % 3 === 0 || processedCount === limitedProxies.length) {
+                        requestAnimationFrame(() => {
+                            const percentage = (processedCount / limitedProxies.length) * 100;
+                            validationBar.style.width = `${percentage}%`;
+                            validationCount.textContent = `${processedCount}/${limitedProxies.length}`;
+                            validCountEl.textContent = validCount;
+                            invalidCountEl.textContent = invalidCount;
+                        });
+                    }
+                }
+            }
+            
+            // Use valid proxies for configuration generation
+            if (validProxies.length === 0) {
+                // If no valid proxies found but we're only asking for a small number,
+                // just use some unvalidated ones to meet the minimum requirement
+                if (parseInt(limit) <= 5) {
+                    console.log("No valid proxies found, but using unvalidated ones to meet minimum requirement");
+                    validProxies = limitedProxies.slice(0, parseInt(limit));
+                } else {
+                    throw new Error("No valid proxies found matching your criteria");
+                }
+            }
+
+            // Hide validation status UI
+            document.getElementById('validation-status').style.display = 'none';
+
+            // Show loading again for config generation
+            document.getElementById('loading').style.display = 'block';
+
+            // If we have fewer valid proxies than requested, add some unvalidated ones to meet the requested limit
+            if (validProxies.length < parseInt(limit)) {
+                // Get all proxy hosts we've already validated (both valid and invalid)
+                const allValidatedHosts = new Set(limitedProxies.map(line => line.split(',')[0]));
+                
+                // Find completely new proxies that haven't been validated at all
+                const newProxies = proxyList.filter(line => {
+                    const host = line.split(',')[0];
+                    return !allValidatedHosts.has(host);
+                });
+                
+                // Add enough new proxies to reach the requested limit
+                const neededCount = parseInt(limit) - validProxies.length;
+                const additionalProxies = newProxies.slice(0, neededCount);
+                
+                // Combine valid proxies with new ones
+                limitedProxies = [...validProxies, ...additionalProxies];
+                
+                // Make sure we don't exceed the requested limit
+                limitedProxies = limitedProxies.slice(0, parseInt(limit));
+                
+                console.log(`Using ${validProxies.length} validated proxies and ${additionalProxies.length} new proxies`);
+            } else {
+                // Use just the valid proxies (might be fewer than requested if we don't have enough new ones)
+                limitedProxies = validProxies.slice(0, parseInt(limit));
+            }
         }
         
         // For Clash format, we'll collect all proxies under a single header
@@ -1222,8 +1431,468 @@ async function generateV2raySub(type, uuid, bugType, mainDomain, customBugs, tls
             
             // Return a single Clash configuration with all proxies
             return `#Stupid-World\nproxies:\n${allProxies.join('\n')}`;
-        } else {
-            // V2Ray format - process each proxy individually
+        } 
+        // For Singbox format
+        else if (formatType === 'singbox') {
+            let allProxies = [];
+            let proxyTags = [];
+            
+            for (let i = 0; i < limitedProxies.length; i++) {
+                const line = limitedProxies[i];
+                const parts = line.split(',');
+                if (parts.length < 3) continue;
+                
+                const [proxyHost, proxyPort, countryCode, ...ispParts] = parts;
+                const isp = ispParts.join(' ') || 'Unknown';
+                const emojiFlag = getEmojiFlag(countryCode);
+                const sanitizedIsp = isp.replace(/[\n\r]+/g, "").trim();
+                
+                // If we have multiple bugs, create configs for each bug
+                const bugsToUse = customBugs && customBugs.length > 0 ? customBugs : [mainDomain];
+                
+                for (const bug of bugsToUse) {
+                    // Determine domain, host, and SNI for this specific bug
+                    let bugDomain, bugHost, bugSni;
+                    
+                    switch (bugType) {
+                        case 'default':
+                            bugDomain = mainDomain;
+                            bugHost = mainDomain;
+                            bugSni = mainDomain;
+                            break;
+                        case 'non-wildcard':
+                            bugDomain = bug;
+                            bugHost = mainDomain;
+                            bugSni = mainDomain;
+                            break;
+                        case 'wildcard':
+                            bugDomain = bug;
+                            bugHost = `${bug}.${mainDomain}`;
+                            bugSni = `${bug}.${mainDomain}`;
+                            break;
+                    }
+                    
+                    const bugLabel = bug !== mainDomain ? `[${bug}]` : '';
+                    const name = `${emojiFlag} (${countryCode}) ${sanitizedIsp} ${bugLabel} ${i+1}`;
+                    
+                    switch (type) {
+                        case 'vless':
+                            proxyTags.push(`        "${name}",`);
+                            allProxies.push(generateSingboxConfig(name, uuid, bugDomain, bugHost, bugSni, proxyHost, proxyPort, tls, 'vless'));
+                            break;
+                        case 'trojan':
+                            proxyTags.push(`        "${name}",`);
+                            allProxies.push(generateSingboxConfig(name, uuid, bugDomain, bugHost, bugSni, proxyHost, proxyPort, tls, 'trojan'));
+                            break;
+                        case 'shadowsocks':
+                            proxyTags.push(`        "${name}",`);
+                            allProxies.push(generateSingboxConfig(name, uuid, bugDomain, bugHost, bugSni, proxyHost, proxyPort, tls, 'ss'));
+                            break;
+                        case 'mix':
+                            proxyTags.push(`        "${name} vless",`);
+                            proxyTags.push(`        "${name} trojan",`);
+                            proxyTags.push(`        "${name} ss",`);
+                            allProxies.push(generateSingboxConfig(`${name} vless`, uuid, bugDomain, bugHost, bugSni, proxyHost, proxyPort, tls, 'vless'));
+                            allProxies.push(generateSingboxConfig(`${name} trojan`, uuid, bugDomain, bugHost, bugSni, proxyHost, proxyPort, tls, 'trojan'));
+                            allProxies.push(generateSingboxConfig(`${name} ss`, uuid, bugDomain, bugHost, bugSni, proxyHost, proxyPort, tls, 'ss'));
+                            break;
+                    }
+                }
+            }
+            
+            // Remove trailing comma from the last proxy
+            if (allProxies.length > 0) {
+                const lastProxy = allProxies[allProxies.length - 1];
+                allProxies[allProxies.length - 1] = lastProxy.replace(/,\s*$/, '');
+            }
+            
+            // Create the full Singbox configuration
+            return `#### BY : GEO PROJECT #### 
+
+{
+  "log": {
+    "level": "info"
+  },
+  "dns": {
+    "servers": [
+      {
+        "tag": "remote-dns",
+        "address": "https://family.cloudflare-dns.com/dns-query",
+        "address_resolver": "direct-dns",
+        "strategy": "ipv4_only"
+      },
+      {
+        "tag": "direct-dns",
+        "address": "local",
+        "strategy": "ipv4_only"
+      },
+      {
+        "tag": "dns-final",
+        "address": "local",
+        "address_resolver": "dns-local",
+        "strategy": "ipv4_only"
+      },
+      {
+        "tag": "dns-local",
+        "address": "local"
+      },
+      {
+        "tag": "dns-block",
+        "address": "rcode://success"
+      }
+    ],
+    "rules": [
+      {
+        "domain": [
+          "family.cloudflare-dns.com",
+          "${mainDomain}"
+        ],
+        "server": "direct-dns"
+      }
+    ],
+    "final": "dns-final",
+    "independent_cache": true
+  },
+  "inbounds": [
+    {
+      "type": "tun",
+      "mtu": 1400,
+      "inet4_address": "172.19.0.1/30",
+      "inet6_address": "fdfe:dcba:9876::1/126",
+      "auto_route": true,
+      "strict_route": true,
+      "endpoint_independent_nat": true,
+      "stack": "mixed",
+      "sniff": true
+    }
+  ],
+  "outbounds": [
+    {
+      "tag": "Internet",
+      "type": "selector",
+      "outbounds": [
+        "Best Latency",
+${proxyTags.join('\n')}
+        "direct"
+      ]
+    },
+    {
+      "type": "urltest",
+      "tag": "Best Latency",
+      "outbounds": [
+${proxyTags.join('\n')}
+        "direct"
+      ],
+      "url": "https://ping.wildcrd.us.kg",
+      "interval": "30s"
+    },
+${allProxies.join(',\n')},
+    {
+      "type": "direct",
+      "tag": "direct"
+    },
+    {
+      "type": "direct",
+      "tag": "bypass"
+    },
+    {
+      "type": "block",
+      "tag": "block"
+    },
+    {
+      "type": "dns",
+      "tag": "dns-out"
+    }
+  ],
+  "route": {
+    "rules": [
+      {
+        "port": 53,
+        "outbound": "dns-out"
+      },
+      {
+        "inbound": "dns-in",
+        "outbound": "dns-out"
+      },
+      {
+        "network": "udp",
+        "port": 443,
+        "outbound": "block"
+      },
+      {
+        "source_ip_cidr": [
+          "224.0.0.0/3",
+          "ff00::/8"
+        ],
+        "ip_cidr": [
+          "224.0.0.0/3",
+          "ff00::/8"
+        ],
+        "outbound": "block"
+      }
+    ],
+    "auto_detect_interface": true
+  },
+  "experimental": {
+    "cache_file": {
+      "enabled": false
+    },
+    "clash_api": {
+      "external_controller": "127.0.0.1:9090",
+      "external_ui": "ui",
+      "external_ui_download_url": "https://github.com/MetaCubeX/metacubexd/archive/gh-pages.zip",
+      "external_ui_download_detour": "Internet",
+      "secret": "bitzblack",
+      "default_mode": "rule"
+    }
+  }
+}`;
+        }
+        // For Nekobox format
+        else if (formatType === 'nekobox') {
+            let allProxies = [];
+            let proxyTags = [];
+            
+            for (let i = 0; i < limitedProxies.length; i++) {
+                const line = limitedProxies[i];
+                const parts = line.split(',');
+                if (parts.length < 3) continue;
+                
+                const [proxyHost, proxyPort, countryCode, ...ispParts] = parts;
+                const isp = ispParts.join(' ') || 'Unknown';
+                const emojiFlag = getEmojiFlag(countryCode);
+                const sanitizedIsp = isp.replace(/[\n\r]+/g, "").trim();
+                
+                // If we have multiple bugs, create configs for each bug
+                const bugsToUse = customBugs && customBugs.length > 0 ? customBugs : [mainDomain];
+                
+                for (const bug of bugsToUse) {
+                    // Determine domain, host, and SNI for this specific bug
+                    let bugDomain, bugHost, bugSni;
+                    
+                    switch (bugType) {
+                        case 'default':
+                            bugDomain = mainDomain;
+                            bugHost = mainDomain;
+                            bugSni = mainDomain;
+                            break;
+                        case 'non-wildcard':
+                            bugDomain = bug;
+                            bugHost = mainDomain;
+                            bugSni = mainDomain;
+                            break;
+                        case 'wildcard':
+                            bugDomain = bug;
+                            bugHost = `${bug}.${mainDomain}`;
+                            bugSni = `${bug}.${mainDomain}`;
+                            break;
+                    }
+                    
+                    const bugLabel = bug !== mainDomain ? `[${bug}]` : '';
+                    const name = `${emojiFlag} (${countryCode}) ${sanitizedIsp} ${bugLabel} ${i+1}`;
+                    
+                    switch (type) {
+                        case 'vless':
+                            proxyTags.push(`        "${name}",`);
+                            allProxies.push(generateNekoboxConfig(name, uuid, bugDomain, bugHost, bugSni, proxyHost, proxyPort, tls, 'vless'));
+                            break;
+                        case 'trojan':
+                            proxyTags.push(`        "${name}",`);
+                            allProxies.push(generateNekoboxConfig(name, uuid, bugDomain, bugHost, bugSni, proxyHost, proxyPort, tls, 'trojan'));
+                            break;
+                        case 'shadowsocks':
+                            proxyTags.push(`        "${name}",`);
+                            allProxies.push(generateNekoboxConfig(name, uuid, bugDomain, bugHost, bugSni, proxyHost, proxyPort, tls, 'ss'));
+                            break;
+                        case 'mix':
+                            proxyTags.push(`        "${name} vless",`);
+                            proxyTags.push(`        "${name} trojan",`);
+                            proxyTags.push(`        "${name} ss",`);
+                            allProxies.push(generateNekoboxConfig(`${name} vless`, uuid, bugDomain, bugHost, bugSni, proxyHost, proxyPort, tls, 'vless'));
+                            allProxies.push(generateNekoboxConfig(`${name} trojan`, uuid, bugDomain, bugHost, bugSni, proxyHost, proxyPort, tls, 'trojan'));
+                            allProxies.push(generateNekoboxConfig(`${name} ss`, uuid, bugDomain, bugHost, bugSni, proxyHost, proxyPort, tls, 'ss'));
+                            break;
+                    }
+                }
+            }
+            
+            // Remove trailing comma from the last proxy
+            if (allProxies.length > 0) {
+                const lastProxy = allProxies[allProxies.length - 1];
+                allProxies[allProxies.length - 1] = lastProxy.replace(/,\s*$/, '');
+            }
+            
+            // Create the full Nekobox configuration
+            return `#### BY : GEO PROJECT #### 
+
+{
+  "dns": {
+    "final": "dns-final",
+    "independent_cache": true,
+    "rules": [
+      {
+        "disable_cache": false,
+        "domain": [
+          "family.cloudflare-dns.com",
+          "${mainDomain}"
+        ],
+        "server": "direct-dns"
+      }
+    ],
+    "servers": [
+      {
+        "address": "https://family.cloudflare-dns.com/dns-query",
+        "address_resolver": "direct-dns",
+        "strategy": "ipv4_only",
+        "tag": "remote-dns"
+      },
+      {
+        "address": "local",
+        "strategy": "ipv4_only",
+        "tag": "direct-dns"
+      },
+      {
+        "address": "local",
+        "address_resolver": "dns-local",
+        "strategy": "ipv4_only",
+        "tag": "dns-final"
+      },
+      {
+        "address": "local",
+        "tag": "dns-local"
+      },
+      {
+        "address": "rcode://success",
+        "tag": "dns-block"
+      }
+    ]
+  },
+  "experimental": {
+    "cache_file": {
+      "enabled": true,
+      "path": "../cache/clash.db",
+      "store_fakeip": true
+    },
+    "clash_api": {
+      "external_controller": "127.0.0.1:9090",
+      "external_ui": "../files/yacd"
+    }
+  },
+  "inbounds": [
+    {
+      "listen": "0.0.0.0",
+      "listen_port": 6450,
+      "override_address": "8.8.8.8",
+      "override_port": 53,
+      "tag": "dns-in",
+      "type": "direct"
+    },
+    {
+      "domain_strategy": "",
+      "endpoint_independent_nat": true,
+      "inet4_address": [
+        "172.19.0.1/28"
+      ],
+      "mtu": 9000,
+      "sniff": true,
+      "sniff_override_destination": true,
+      "stack": "system",
+      "tag": "tun-in",
+      "type": "tun"
+    },
+    {
+      "domain_strategy": "",
+      "listen": "0.0.0.0",
+      "listen_port": 2080,
+      "sniff": true,
+      "sniff_override_destination": true,
+      "tag": "mixed-in",
+      "type": "mixed"
+    }
+  ],
+  "log": {
+    "level": "info"
+  },
+  "outbounds": [
+    {
+      "outbounds": [
+        "Best Latency",
+${proxyTags.join('\n')}
+        "direct"
+      ],
+      "tag": "Internet",
+      "type": "selector"
+    },
+    {
+      "interval": "1m0s",
+      "outbounds": [
+${proxyTags.join('\n')}
+        "direct"
+      ],
+      "tag": "Best Latency",
+      "type": "urltest",
+      "url": "https://detectportal.firefox.com/success.txt"
+    },
+${allProxies.join(',\n')},
+    {
+      "tag": "direct",
+      "type": "direct"
+    },
+    {
+      "tag": "bypass",
+      "type": "direct"
+    },
+    {
+      "tag": "block",
+      "type": "block"
+    },
+    {
+      "tag": "dns-out",
+      "type": "dns"
+    }
+  ],
+  "route": {
+    "auto_detect_interface": true,
+    "rules": [
+      {
+        "outbound": "dns-out",
+        "port": [
+          53
+        ]
+      },
+      {
+        "inbound": [
+          "dns-in"
+        ],
+        "outbound": "dns-out"
+      },
+      {
+        "network": [
+          "udp"
+        ],
+        "outbound": "block",
+        "port": [
+          443
+        ],
+        "port_range": []
+      },
+      {
+        "ip_cidr": [
+          "224.0.0.0/3",
+          "ff00::/8"
+        ],
+        "outbound": "block",
+        "source_ip_cidr": [
+          "224.0.0.0/3",
+          "ff00::/8"
+        ]
+      }
+    ]
+  }
+}`;
+        }
+        // V2Ray format - process each proxy individually
+        else {
             for (const line of limitedProxies) {
                 const parts = line.split(',');
                 if (parts.length < 3) continue;
