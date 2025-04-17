@@ -1081,6 +1081,30 @@ function generateSingboxConfig(name, uuid, domain, host, sni, proxyHost, proxyPo
       },
       "packet_encoding": "xudp"
     }`;
+    } else if (type === 'vmess') {
+        config = `    {
+      "type": "vmess",
+      "tag": "${name}",
+      "domain_strategy": "ipv4_only",
+      "server": "${domain}",
+      "server_port": ${ports},
+      "uuid": "${uuid}",
+      "alter_id": 0,
+      "security": "zero",${snio}
+      "multiplex": {
+        "protocol": "smux",
+        "max_streams": 32
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/${PATH_PREFIX}/${proxyHost}-${proxyPort}",
+        "headers": {
+          "Host": "${host}"
+        },
+        "early_data_header_name": "Sec-WebSocket-Protocol"
+      },
+      "packet_encoding": "xudp"
+    }`;
     } else if (type === 'trojan') {
         config = `    {
       "type": "trojan",
@@ -1468,6 +1492,10 @@ async function generateV2raySub(type, uuid, bugType, mainDomain, customBugs, tls
                     const name = `(${countryCode}) ${sanitizedIsp} ${bugLabel} ${i+1}`;
                     
                     switch (type) {
+                        case 'vmess':
+                            proxyTags.push(`        "${name}",`);
+                            allProxies.push(generateSingboxConfig(name, uuid, bugDomain, bugHost, bugSni, proxyHost, proxyPort, tls, 'vmess'));
+                            break;
                         case 'vless':
                             proxyTags.push(`        "${name}",`);
                             allProxies.push(generateSingboxConfig(name, uuid, bugDomain, bugHost, bugSni, proxyHost, proxyPort, tls, 'vless'));
@@ -1481,9 +1509,11 @@ async function generateV2raySub(type, uuid, bugType, mainDomain, customBugs, tls
                             allProxies.push(generateSingboxConfig(name, uuid, bugDomain, bugHost, bugSni, proxyHost, proxyPort, tls, 'ss'));
                             break;
                         case 'mix':
+                            proxyTags.push(`        "${name} vmess",`);
                             proxyTags.push(`        "${name} vless",`);
                             proxyTags.push(`        "${name} trojan",`);
                             proxyTags.push(`        "${name} ss",`);
+                            allProxies.push(generateSingboxConfig(`${name} vmess`, uuid, bugDomain, bugHost, bugSni, proxyHost, proxyPort, tls, 'vmess'));
                             allProxies.push(generateSingboxConfig(`${name} vless`, uuid, bugDomain, bugHost, bugSni, proxyHost, proxyPort, tls, 'vless'));
                             allProxies.push(generateSingboxConfig(`${name} trojan`, uuid, bugDomain, bugHost, bugSni, proxyHost, proxyPort, tls, 'trojan'));
                             allProxies.push(generateSingboxConfig(`${name} ss`, uuid, bugDomain, bugHost, bugSni, proxyHost, proxyPort, tls, 'ss'));
@@ -1634,7 +1664,7 @@ ${allProxies.join(',\n')},
       "external_ui": "ui",
       "external_ui_download_url": "https://github.com/MetaCubeX/metacubexd/archive/gh-pages.zip",
       "external_ui_download_detour": "Internet",
-      "secret": "bitzblack",
+      "secret": "stupid",
       "default_mode": "rule"
     }
   }
