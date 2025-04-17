@@ -842,7 +842,7 @@ select.form-control {
 
 <script>
     // Constants
-    const DEFAULT_PROXY_BANK_URL = 'https://raw.githubusercontent.com/InconigtoMode/proxylist/refs/heads/main/ProxyList.txt';
+    const DEFAULT_PROXY_BANK_URL = 'https://raw.githubusercontent.com/LuckyX2-Stup/Stupid-Tunnel/refs/heads/main/allproxy.txt';
     const PROXY_CHECK_API_URL = 'https://apicek.t-me-inconigto.workers.dev/proxy';
     const PATH_PREFIX = 'Stupid-World'; // Hardcoded path prefix
     const MainDomains = [
@@ -851,15 +851,6 @@ select.form-control {
     ];
 
     const CustomBugs = [];
-    
-    // Helper Functions
-    function generateUUIDv4() {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-            const r = Math.random() * 16 | 0;
-            const v = c === 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
-        });
-    }
     
     // Safe base64 encoding function
     function safeBase64Encode(str) {
@@ -1566,7 +1557,7 @@ async function generateV2raySub(type, uuid, bugType, mainDomain, customBugs, tls
       {
         "domain": [
           "family.cloudflare-dns.com",
-          "${mainDomain}"
+          "${domain}"
         ],
         "server": "direct-dns"
       }
@@ -1754,7 +1745,7 @@ ${allProxies.join(',\n')},
         "disable_cache": false,
         "domain": [
           "family.cloudflare-dns.com",
-          "${mainDomain}"
+          "${domain}"
         ],
         "server": "direct-dns"
       }
@@ -2039,11 +2030,6 @@ ${allProxies.join(',\n')},
             } else {
                 customBugContainer.style.display = 'block';
             }
-        });
-        
-        // UUID generator button
-        generateUuidBtn.addEventListener('click', () => {
-            uuidInput.value = generateUUIDv4();
         });
         
         // Form submission handler
