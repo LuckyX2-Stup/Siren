@@ -1186,6 +1186,32 @@ function generateNekoboxConfig(name, uuid, domain, host, sni, proxyHost, proxyPo
       },
       "type": "trojan"
     }`;
+    } else if (type === 'vmess') {
+        config = `    {
+      "domain_strategy": "ipv4_only",
+      "multiplex": {
+        "enabled": false,
+        "max_streams": 32,
+        "protocol": "smux"
+      },
+      "packet_encoding": "xudp",
+      "server": "${domain}",
+      "server_port": ${ports},
+      "tag": "${name}",${snio}
+      "transport": {
+        "early_data_header_name": "Sec-WebSocket-Protocol",
+        "headers": {
+          "Host": "${host}"
+        },
+        "max_early_data": 0,
+        "path": "/${PATH_PREFIX}/${proxyHost}-${proxyPort}",
+        "type": "ws"
+      },
+      "type": "vmess",
+      "uuid": "${uuid}",
+      "alter_id": 0,
+      "security": "zero"
+    }`;
     } else if (type === 'ss') {
         config = `    {
       "type": "shadowsocks",
@@ -1707,6 +1733,10 @@ ${allProxies.join(',\n')},
                             proxyTags.push(`        "${name}",`);
                             allProxies.push(generateNekoboxConfig(name, uuid, bugDomain, bugHost, bugSni, proxyHost, proxyPort, tls, 'vless'));
                             break;
+                        case 'vmess':
+                            proxyTags.push(`        "${name}",`);
+                            allProxies.push(generateNekoboxConfig(name, uuid, bugDomain, bugHost, bugSni, proxyHost, proxyPort, tls, 'vmess'));
+                            break;
                         case 'trojan':
                             proxyTags.push(`        "${name}",`);
                             allProxies.push(generateNekoboxConfig(name, uuid, bugDomain, bugHost, bugSni, proxyHost, proxyPort, tls, 'trojan'));
@@ -1717,9 +1747,11 @@ ${allProxies.join(',\n')},
                             break;
                         case 'mix':
                             proxyTags.push(`        "${name} vless",`);
+                            proxyTags.push(`        "${name} vmess",`);
                             proxyTags.push(`        "${name} trojan",`);
                             proxyTags.push(`        "${name} ss",`);
                             allProxies.push(generateNekoboxConfig(`${name} vless`, uuid, bugDomain, bugHost, bugSni, proxyHost, proxyPort, tls, 'vless'));
+                            allProxies.push(generateNekoboxConfig(`${name} vmess`, uuid, bugDomain, bugHost, bugSni, proxyHost, proxyPort, tls, 'vmess'));
                             allProxies.push(generateNekoboxConfig(`${name} trojan`, uuid, bugDomain, bugHost, bugSni, proxyHost, proxyPort, tls, 'trojan'));
                             allProxies.push(generateNekoboxConfig(`${name} ss`, uuid, bugDomain, bugHost, bugSni, proxyHost, proxyPort, tls, 'ss'));
                             break;
