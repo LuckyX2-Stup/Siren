@@ -34,7 +34,7 @@ command = "cargo install -q worker-build && worker-build --release"
 build = { command = "cargo install -q worker-build && worker-build --dev" }
 
 [vars]
-UUID = "4d0cd331-daf1-4729-9a23-stupidworld7"
+UUID = "bef63218-3a18-4f59-acac-28622247e22c"
 MAIN_PAGE_URL = "https://raw.githubusercontent.com/LuckyX2-Stup/Siren/refs/heads/master/web/index.html"
 SUB_PAGE_URL = "https://raw.githubusercontent.com/LuckyX2-Stup/Siren/refs/heads/master/web/sub.html"
 LINK_PAGE_URL = "https://raw.githubusercontent.com/LuckyX2-Stup/Siren/refs/heads/master/web/link.html"
