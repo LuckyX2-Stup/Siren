@@ -10,24 +10,24 @@
 <link rel="icon" href="https://raw.githubusercontent.com/AFRcloud/BG/main/icons8-film-noir-80.png"/>
 <style>
 :root {
-    --color-bg: #050a18;
-    --color-bg-card: #0a1128;
-    --color-primary: #00ddff;
-    --color-secondary: #7700ff;
-    --color-accent: #ff00aa;
-    --color-text: #e0f7ff;
-    --color-text-dim: #8ba3b8;
-    --color-success: #00ffaa;
-    --color-error: #ff2266;
-    --color-input-bg: rgba(0, 221, 255, 0.05);
-    --color-input-border: rgba(0, 221, 255, 0.2);
-    --glow-primary: 0 0 10px rgba(0, 221, 255, 0.5), 0 0 20px rgba(0, 221, 255, 0.2);
-    --glow-secondary: 0 0 10px rgba(119, 0, 255, 0.5), 0 0 20px rgba(119, 0, 255, 0.2);
-    --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    --color-bg: #121212; /* Warna latar belakang gelap yang lebih netral */
+    --color-bg-card: #2a2a3d; /* Kartu dengan latar belakang gelap kebiruan */
+    --color-primary: #a3a3ff; /* Warna primer yang lebih kalem dan lembut */
+    --color-secondary: #6c92b6; /* Warna sekunder yang lebih tenang */
+    --color-accent: #ff4081; /* Warna aksen yang sedikit lebih tenang */
+    --color-text: #e0e0e0; /* Warna teks yang lebih terang untuk kontras */
+    --color-text-dim: #a3a3a3; /* Warna teks lebih redup yang elegan */
+    --color-success: #66ff66; /* Warna sukses yang lembut dan alami */
+    --color-error: #ff3333; /* Warna error yang lebih tenang */
+    --color-input-bg: rgba(255, 255, 255, 0.05); /* Latar belakang input yang lebih gelap */
+    --color-input-border: rgba(255, 107, 129, 0.3); /* Border input dengan transparansi lebih tinggi */
+    --glow-primary: 0 0 15px rgba(163, 163, 255, 0.4), 0 0 30px rgba(163, 163, 255, 0.2); /* Glow lebih halus */
+    --glow-secondary: 0 0 15px rgba(108, 146, 182, 0.5), 0 0 30px rgba(108, 146, 182, 0.2); /* Glow kedua lebih soft */
+    --transition: all 0.3s ease; /* Transisi tetap halus */
     --card-width: 100%;
     --card-max-width: 480px;
     --card-padding: 1.5rem;
-    --card-border-radius: 12px;
+    --card-border-radius: 15px; /* Sudut lebih halus */
 }
 
 * {
@@ -37,7 +37,7 @@
 }
 
 body {
-    font-family: 'Rajdhani', sans-serif;
+    font-family: 'Montserrat', sans-serif; /* Ganti font menjadi Montserrat */
     background-color: var(--color-bg);
     color: var(--color-text);
     line-height: 1.6;
@@ -46,8 +46,8 @@ body {
     flex-direction: column;
     align-items: center;
     background-image: 
-        radial-gradient(circle at 10% 20%, rgba(0, 221, 255, 0.03) 0%, transparent 20%),
-        radial-gradient(circle at 90% 80%, rgba(119, 0, 255, 0.03) 0%, transparent 20%),
+        radial-gradient(circle at 10% 20%, rgba(255, 107, 129, 0.03) 0%, transparent 20%),
+        radial-gradient(circle at 90% 80%, rgba(78, 205, 196, 0.03) 0%, transparent 20%),
         linear-gradient(rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.2) 100%);
     background-attachment: fixed;
     position: relative;
@@ -82,10 +82,10 @@ body::before {
     background: var(--color-bg-card);
     border-radius: var(--card-border-radius);
     padding: var(--card-padding);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Bayangan yang lebih halus */
     position: relative;
     overflow: hidden;
-    border: 1px solid rgba(0, 221, 255, 0.1);
+    border: 1px solid rgba(255, 107, 129, 0.1);
     width: 100%;
 }
 
@@ -104,11 +104,11 @@ body::before {
     position: absolute;
     top: 3px;
     left: 0;
-    width: 100%;
+    width: 100 %;
     height: 1px;
     background: linear-gradient(90deg, 
-        rgba(0, 221, 255, 0.5), 
-        rgba(119, 0, 255, 0.5), 
+        rgba(255, 107, 129, 0.5), 
+        rgba(78, 205, 196, 0.5), 
         rgba(255, 0, 170, 0.5));
     filter: blur(1px);
 }
@@ -175,7 +175,7 @@ body::before {
     border: 1px solid var(--color-input-border);
     border-radius: 8px;
     color: var(--color-text);
-    font-family: 'Rajdhani', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-size: 0.95rem;
     font-weight: 500;
     transition: var(--transition);
@@ -189,7 +189,7 @@ body::before {
 
 select.form-control {
     appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2300ddff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23ff6b81' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 0.8rem center;
     background-size: 1rem;
@@ -202,7 +202,7 @@ select.form-control {
     background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
     color: var(--color-bg);
     border: none;
-    border-radius: 8px;
+    border-radius: 20px; /* Sudut tombol yang lebih halus */
     font-family: 'Orbitron', sans-serif;
     font-weight: 600;
     font-size: 1rem;
@@ -245,9 +245,9 @@ select.form-control {
     display: inline-block;
     width: 40px;
     height: 40px;
-    border: 3px solid rgba(0, 221, 255, 0.1);
+    border: 3px solid rgba(255, 107, 129, 0.1);
     border-radius: 50%;
-    border-top-color: var(--color-primary);
+    border-top -color: var(--color-primary);
     animation: spin 1s ease-in-out infinite;
 }
 
@@ -311,7 +311,7 @@ select.form-control {
     border: none;
     border-radius: 8px;
     padding: 0.7rem 1rem;
-    font-family: 'Rajdhani', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-weight: 600;
     font-size: 0.95rem;
     cursor: pointer;
@@ -434,19 +434,20 @@ select.form-control {
     border: none;
     color: var(--color-primary);
     padding: 4px 8px;
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
     font-size: 0.75rem;
-    transition: var(--transition);
+    transition: background 0.3s ease, transform 0.3s ease;
 }
 
 .uuid-generate:hover {
-    background: rgba(0, 221, 255, 0.2);
+    background: rgba(0, 221, 255, 0.15);
+    transform: scale(1.05);
 }
 
 .form-row {
     display: flex;
-    gap: 0.8rem;
+    gap: 1rem;
     margin-bottom: 1.2rem;
 }
 
@@ -459,11 +460,10 @@ select.form-control {
     display: inline-block;
     background: var(--color-accent);
     color: var(--color-bg);
-    font-size: 0.65rem;
-    padding: 1px 5px;
+    font-size: 0.7rem;
+    padding: 2px 6px;
     border-radius: 3px;
     margin-left: 5px;
-    vertical-align: middle;
     font-weight: 600;
 }
 
@@ -471,22 +471,21 @@ select.form-control {
     display: none;
 }
 
-/* Footer styles */
 .footer {
     width: var(--card-width);
     max-width: var(--card-max-width);
     background: var(--color-bg-card);
     border-radius: var(--card-border-radius);
-    padding: 1.2rem;
+    padding: 1rem;
     position: relative;
-    border: 1px solid rgba(0, 221, 255, 0.1);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(0, 221, 255, 0.15);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    overflow: hidden;
     margin: 0 0.75rem;
+    overflow: hidden;
 }
 
 .footer-logo {
@@ -498,8 +497,6 @@ select.form-control {
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    position: relative;
-    display: inline-block;
 }
 
 .footer-powered {
@@ -512,7 +509,7 @@ select.form-control {
 .footer-social {
     display: flex;
     justify-content: center;
-    gap: 0.8rem;
+    gap: 1rem;
     margin-bottom: 0.6rem;
     flex-wrap: wrap;
 }
@@ -525,8 +522,8 @@ select.form-control {
     padding: 0.25rem 0.6rem;
     border-radius: 4px;
     background: rgba(0, 221, 255, 0.05);
-    border: 1px solid rgba(0, 221, 255, 0.1);
-    transition: var(--transition);
+    border: 1px solid rgba(0, 221, 255, 0.15);
+    transition: all 0.3s ease;
     display: flex;
     align-items: center;
     gap: 0.3rem;
@@ -534,8 +531,8 @@ select.form-control {
 
 .social-link:hover {
     background: rgba(0, 221, 255, 0.1);
-    box-shadow: var(--glow-primary);
-    transform: translateY(-2px);
+    box-shadow: 0 2px 10px rgba(0, 221, 255, 0.2);
+    transform: translateY(-3px);
 }
 
 .social-icon {
@@ -555,35 +552,14 @@ select.form-control {
 .circuit-line {
     position: absolute;
     background: var(--color-primary);
-    opacity: 0.1;
+    opacity: 0.15;
 }
 
-.circuit-line-1 {
-    width: 60px;
-    height: 1px;
-    top: 20px;
-    left: 20px;
-}
-
-.circuit-line-2 {
-    width: 1px;
-    height: 30px;
-    top: 20px;
-    left: 20px;
-}
-
-.circuit-line-3 {
-    width: 40px;
-    height: 1px;
-    bottom: 25px;
-    right: 30px;
-}
-
+.circuit-line-1,
+.circuit-line-2,
+.circuit-line-3,
 .circuit-line-4 {
-    width: 1px;
-    height: 25px;
-    bottom: 25px;
-    right: 30px;
+    transition: opacity 0.3s ease;
 }
 
 .circuit-dot {
@@ -595,27 +571,6 @@ select.form-control {
     opacity: 0.2;
 }
 
-.circuit-dot-1 {
-    top: 20px;
-    left: 20px;
-}
-
-.circuit-dot-2 {
-    top: 50px;
-    left: 20px;
-}
-
-.circuit-dot-3 {
-    bottom: 25px;
-    right: 30px;
-}
-
-.circuit-dot-4 {
-    bottom: 50px;
-    right: 30px;
-}
-
-/* Validation status styles */
 .validation-status {
     display: none;
     margin-top: 1rem;
@@ -630,7 +585,6 @@ select.form-control {
     width: 100%;
     background: rgba(0, 0, 0, 0.2);
     border-radius: 3px;
-    overflow: hidden;
 }
 
 .validation-bar {
@@ -645,19 +599,6 @@ select.form-control {
     justify-content: space-between;
     margin-top: 0.5rem;
     font-size: 0.8rem;
-}
-
-.validation-check {
-    margin-right: 0.5rem;
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-}
-
-.form-group.validation-group {
-    display: flex;
-    align-items: center;
-    margin-bottom: 1rem;
 }
 
 .form-check {
