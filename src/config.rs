@@ -9,4 +9,5 @@ pub struct Config {
     pub main_page_url: String,
     pub sub_page_url: String,
     pub link_page_url: String,
+    pub project_page_url: String,
 }
