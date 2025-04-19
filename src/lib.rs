@@ -25,6 +25,7 @@ async fn main(req: Request, env: Env, _: Context) -> Result<Response> {
     let main_page_url = env.var("MAIN_PAGE_URL").map(|x|x.to_string()).unwrap();
     let sub_page_url = env.var("SUB_PAGE_URL").map(|x|x.to_string()).unwrap();
     let link_page_url = env.var("LINK_PAGE_URL").map(|x|x.to_string()).unwrap();
+    let project_page_url = env.var("PROJECT_PAGE_URL").map(|x|x.to_string()).unwrap();
     let config = Config { 
         uuid, 
         host: host.clone(), 
@@ -32,13 +33,15 @@ async fn main(req: Request, env: Env, _: Context) -> Result<Response> {
         proxy_port: 443, 
         main_page_url, 
         sub_page_url,
-        link_page_url
+        link_page_url,
+        project_page_url
     };
 
     Router::with_data(config)
         .on_async("/", fe)
         .on_async("/sub", sub)
-        .on_async("/link", link)  // Changed to on_async
+        .on_async("/link", link)
+        .on_async("/project", project)
         .on_async("/:proxyip", tunnel)
         .on_async("/Stupid-World/:proxyip", tunnel)
         .run(req, env)
