@@ -26,9 +26,14 @@
 <!-- Header -->
 <header class="flex justify-between items-center p-6 fade-in">
   <div class="text-2xl font-bold">Stupid World</div>
-  <button onclick="showMain()" class="w-10 h-10 flex items-center justify-center rounded-full bg-[#1A1F2E] hover:bg-[#2A2F3E] transition">
+  <!-- Back Button (Only shown on project detail page) -->
+  <button id="backButton" onclick="showMain()" class="w-10 h-10 flex items-center justify-center rounded-full bg-[#1A1F2E] hover:bg-[#2A2F3E] transition hidden">
     <i class="fas fa-arrow-left text-white text-lg"></i>
   </button>
+  <!-- Home Button (Visible on main project list page) -->
+<a href="https://vpn.stupidworld.web.id" id="homeButton" class="w-10 h-10 flex items-center justify-center rounded-full bg-[#1A1F2E] hover:bg-[#2A2F3E] transition">
+    <i class="fas fa-home text-white text-lg"></i>
+</a>
 </header>
 
 <!-- Project List Section -->
@@ -40,14 +45,14 @@
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
     <div class="bg-[#1A1F2E] p-6 rounded-lg shadow-lg hover:ring-2 hover:ring-blue-500 hover:scale-[1.02] transition">
-      <h2 class="text-xl font-bold mb-2">Husi VPN Config Generator</h2>
-      <p class="text-gray-400 mb-4">Generator konfigurasi Husi berbasis berbagai protokol seperti VLESS, VMess, Trojan dan Shadowsocks.</p>
+      <h2 class="text-xl font-bold mb-2">Verify Cloudflare Proxy Status</h2>
+      <p class="text-gray-400 mb-4">This tool lets you quickly verify the status of a Cloudflare proxy.</p>
       <button onclick="showProject('husi')" class="text-blue-400 hover:underline">Lihat Selengkapnya</button>
     </div>
     
     <div class="bg-[#1A1F2E] p-6 rounded-lg shadow-lg hover:ring-2 hover:ring-blue-500 hover:scale-[1.02] transition">
-      <h2 class="text-xl font-bold mb-2">Sing-box Proxy Tool</h2>
-      <p class="text-gray-400 mb-4">Tool singkat untuk menghasilkan konfigurasi Sing-box dengan mudah dan cepat.</p>
+      <h2 class="text-xl font-bold mb-2">Bot Telegram</h2>
+      <p class="text-gray-400 mb-4">Advanced Telegram Bot for Automatic Configuration.</p>
       <button onclick="showProject('singbox')" class="text-blue-400 hover:underline">Lihat Selengkapnya</button>
     </div>
   </div>
@@ -79,26 +84,26 @@
   function showProject(project) {
     document.getElementById('project-list').classList.add('hidden');
     document.getElementById('project-detail').classList.remove('hidden');
+    document.getElementById('backButton').classList.remove('hidden'); // Show back button
+    document.getElementById('homeButton').classList.add('hidden'); // Hide home button
 
     const content = {
       husi: `
-        <h1 class="text-4xl font-bold mb-6">Husi VPN Config Generator</h1>
+        <h1 class="text-4xl font-bold mb-6">Verify Cloudflare Proxy Status</h1>
         <p class="text-gray-300 leading-relaxed">
-          Husi VPN Config Generator adalah alat otomatis untuk membuat file konfigurasi Husi berbasis VLESS, VMess, Trojan, dan Shadowsocks.
-          Kamu bisa menyaring berdasarkan negara, mengaktifkan TLS/SNI, serta memilih mode campuran. Alat ini cocok untuk pengguna advanced yang butuh fleksibilitas tinggi.
+          This tool allows you to easily verify the status of a Cloudflare proxy. It provides detailed information, including the IP address, geographical location, internet service provider (ISP), and connection speed — ensuring everything is functioning optimally.
         </p>
         <div class="mt-6">
-          <a href="/husi-generator" class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">Buka Generator</a>
+          <a href="https://cek.stupidworld.web.id/" class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition" target="_blank" rel="noopener noreferrer">Click Here</a>
         </div>
       `,
       singbox: `
-        <h1 class="text-4xl font-bold mb-6">Sing-box Proxy Tool</h1>
+        <h1 class="text-4xl font-bold mb-6">Bot Telegram</h1>
         <p class="text-gray-300 leading-relaxed">
-          Tool ringan untuk menghasilkan konfigurasi JSON Sing-box. Cukup masukkan parameter, dan file siap dipakai.
-          Mendukung tagging, TLS, domain strategies, dan outbounds otomatis. Dibuat agar kamu bisa fokus tanpa ribet ngedit manual.
+          This bot provides automatic responses on Telegram with high efficiency. Now more advanced than ever, simply select the country, choose between wildcard or non-wildcard mode, and if opting for wildcard, select your preferred bug. The result? Instant VLESS and Trojan configurations, ready for use.
         </p>
         <div class="mt-6">
-          <a href="/singbox-tool" class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">Buka Tool</a>
+          <a href="https://t.me/stupidnotx_bot" class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition" target="_blank" rel="noopener noreferrer">Click Here</a>
         </div>
       `
     };
@@ -109,6 +114,8 @@
   function showMain() {
     document.getElementById('project-list').classList.remove('hidden');
     document.getElementById('project-detail').classList.add('hidden');
+    document.getElementById('backButton').classList.add('hidden'); // Hide back button again
+    document.getElementById('homeButton').classList.remove('hidden'); // Show home button again
   }
 </script>
 </body>
