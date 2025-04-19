@@ -67,6 +67,10 @@ async fn link(_: Request, cx: RouteContext<Config>) -> Result<Response> {
     get_response_from_url(cx.data.link_page_url).await
 }
 
+async fn project(_: Request, cx: RouteContext<Config>) -> Result<Response> {
+    get_response_from_url(cx.data.project_page_url).await
+}
+
 async fn tunnel(req: Request, mut cx: RouteContext<Config>) -> Result<Response> {
     let mut proxyip = cx.param("proxyip").unwrap().to_string();
     if PROXYKV_PATTERN.is_match(&proxyip)  {
