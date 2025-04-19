@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Project Lain - Stupid World</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0B0F19;
+      color: #FFFFFF;
+    }
+    .fade-in { animation: fadeIn 1s ease-in-out; }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body class="bg-[#0B0F19] text-white">
+
+<!-- Header -->
+<header class="flex justify-between items-center p-6 fade-in">
+  <div class="text-2xl font-bold">Stupid World</div>
+  <button onclick="showMain()" class="w-10 h-10 flex items-center justify-center rounded-full bg-[#1A1F2E] hover:bg-[#2A2F3E] transition">
+    <i class="fas fa-arrow-left text-white text-lg"></i>
+  </button>
+</header>
+
+<!-- Project List Section -->
+<main id="project-list" class="py-16 px-6 fade-in">
+  <div class="text-center mb-10">
+    <h1 class="text-4xl font-bold mb-4">Project Lain</h1>
+    <p class="text-gray-400">Berbagai tools dan aplikasi menarik lainnya dari Stupid World.</p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="bg-[#1A1F2E] p-6 rounded-lg shadow-lg hover:ring-2 hover:ring-blue-500 hover:scale-[1.02] transition">
+      <h2 class="text-xl font-bold mb-2">Husi VPN Config Generator</h2>
+      <p class="text-gray-400 mb-4">Generator konfigurasi Husi berbasis berbagai protokol seperti VLESS, VMess, Trojan dan Shadowsocks.</p>
+      <button onclick="showProject('husi')" class="text-blue-400 hover:underline">Lihat Selengkapnya</button>
+    </div>
+    
+    <div class="bg-[#1A1F2E] p-6 rounded-lg shadow-lg hover:ring-2 hover:ring-blue-500 hover:scale-[1.02] transition">
+      <h2 class="text-xl font-bold mb-2">Sing-box Proxy Tool</h2>
+      <p class="text-gray-400 mb-4">Tool singkat untuk menghasilkan konfigurasi Sing-box dengan mudah dan cepat.</p>
+      <button onclick="showProject('singbox')" class="text-blue-400 hover:underline">Lihat Selengkapnya</button>
+    </div>
+  </div>
+</main>
+
+<!-- Project Detail Section (hidden by default) -->
+<section id="project-detail" class="py-16 px-6 fade-in hidden">
+  <div id="project-content"></div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-[#0B0F19] py-10 text-center fade-in">
+  <div class="container mx-auto px-6">
+    <h3 class="text-xl font-bold mb-4">STUPID WORLD</h3>
+    <div class="flex justify-center space-x-6 mb-4 text-2xl">
+      <a href="https://github.com/stpdwrld" target="_blank" class="hover:text-gray-400"><i class="fab fa-github"></i></a>
+      <a href="https://instagram.com/luckystpd_" target="_blank" class="hover:text-gray-400"><i class="fab fa-instagram"></i></a>
+      <a href="https://t.me/notx15" target="_blank" class="hover:text-gray-400"><i class="fab fa-telegram"></i></a>
+    </div>
+    <div class="text-sm text-gray-400 space-x-4">
+      <a href="/privacy-policy" class="hover:text-gray-300">Privacy & Cookie Policy</a>
+      <span>|</span>
+      <span>© Stupid World 2025</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  function showProject(project) {
+    document.getElementById('project-list').classList.add('hidden');
+    document.getElementById('project-detail').classList.remove('hidden');
+
+    const content = {
+      husi: `
+        <h1 class="text-4xl font-bold mb-6">Husi VPN Config Generator</h1>
+        <p class="text-gray-300 leading-relaxed">
+          Husi VPN Config Generator adalah alat otomatis untuk membuat file konfigurasi Husi berbasis VLESS, VMess, Trojan, dan Shadowsocks.
+          Kamu bisa menyaring berdasarkan negara, mengaktifkan TLS/SNI, serta memilih mode campuran. Alat ini cocok untuk pengguna advanced yang butuh fleksibilitas tinggi.
+        </p>
+        <div class="mt-6">
+          <a href="/husi-generator" class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">Buka Generator</a>
+        </div>
+      `,
+      singbox: `
+        <h1 class="text-4xl font-bold mb-6">Sing-box Proxy Tool</h1>
+        <p class="text-gray-300 leading-relaxed">
+          Tool ringan untuk menghasilkan konfigurasi JSON Sing-box. Cukup masukkan parameter, dan file siap dipakai.
+          Mendukung tagging, TLS, domain strategies, dan outbounds otomatis. Dibuat agar kamu bisa fokus tanpa ribet ngedit manual.
+        </p>
+        <div class="mt-6">
+          <a href="/singbox-tool" class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">Buka Tool</a>
+        </div>
+      `
+    };
+
+    document.getElementById('project-content').innerHTML = content[project] || '<p>Project tidak ditemukan.</p>';
+  }
+
+  function showMain() {
+    document.getElementById('project-list').classList.remove('hidden');
+    document.getElementById('project-detail').classList.add('hidden');
+  }
+</script>
+</body>
+</html>
