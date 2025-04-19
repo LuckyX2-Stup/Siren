@@ -1923,27 +1923,32 @@ function renderProxyList() {
     proxyCountInfo.textContent = `Showing ${startIndex + 1}-${endIndex} of ${filteredProxyList.length} proxies`;
 }
 
-// Function to check proxy status in the list
 function checkProxyStatusInList(proxy, statusBadge) {
     const statusURL = `https://api.stupidworld.web.id/?proxies=${proxy.ip}:${proxy.port}`;
-    
+
     fetch(statusURL)
         .then(response => response.json())
         .then(data => {
-            if (data.proxyip === true) {
+            const result = data[0]; // Ambil data pertama
+
+            if (result && result.status === 'active') {
                 statusBadge.className = 'inline-block w-3 h-3 rounded-full bg-emerald-500 ml-2';
                 statusBadge.innerHTML = '';
-                statusBadge.title = 'Aktif';
-            } else {
+                statusBadge.title = `Aktif (${result.delay}ms) - ${result.city}, ${result.country} ${result.flag}`;
+            } else if (result && result.status === 'dead') {
                 statusBadge.className = 'inline-block w-3 h-3 rounded-full bg-rose-500 ml-2';
                 statusBadge.innerHTML = '';
-                statusBadge.title = 'Mati';
+                statusBadge.title = 'Mati - ' + (result.message || 'Proxy tidak merespons');
+            } else {
+                statusBadge.className = 'inline-block w-3 h-3 rounded-full bg-amber-500 ml-2';
+                statusBadge.innerHTML = '';
+                statusBadge.title = 'Status tidak diketahui';
             }
         })
         .catch(error => {
             statusBadge.className = 'inline-block w-3 h-3 rounded-full bg-amber-500 ml-2';
             statusBadge.innerHTML = '';
-            statusBadge.title = 'Tidak diketahui';
+            statusBadge.title = 'Terjadi kesalahan';
             console.error("Fetch error:", error);
         });
 }
@@ -2115,7 +2120,6 @@ async function selectProxy(index) {
     checkProxyStatus(selectedProxy);
 }
 
-// Function to check proxy status in the account creation section
 function checkProxyStatus(proxy) {
     const startTime = performance.now();
     const statusURL = `https://api.stupidworld.web.id/?proxies=${proxy.ip}:${proxy.port}`;
@@ -2125,32 +2129,35 @@ function checkProxyStatus(proxy) {
     const statusDead = document.getElementById('proxy-status-dead');
     const statusUnknown = document.getElementById('proxy-status-unknown');
     const latencyElement = document.getElementById('proxy-latency');
-    
-    // Show status container and loading state
+
+    // Tampilkan container dan loading
     statusContainer.classList.remove('hidden');
     statusLoading.classList.remove('hidden');
     statusActive.classList.add('hidden');
     statusDead.classList.add('hidden');
     statusUnknown.classList.add('hidden');
-    
+
     fetch(statusURL)
         .then(response => response.json())
         .then(data => {
             const endTime = performance.now();
-            let latency = Math.floor((endTime - startTime));
-            
-            // Hide loading state
+            const latency = Math.floor(endTime - startTime);
+
+            // Sembunyikan loading
             statusLoading.classList.add('hidden');
-            
-            if (data.proxyip === true) {
+
+            const result = data[0]; // Ambil hasil pertama dari array
+
+            if (result && result.status === 'active') {
                 statusActive.classList.remove('hidden');
-                latencyElement.textContent = `${latency}ms`;
-            } else {
+                latencyElement.textContent = `${result.delay || latency}ms`;
+            } else if (result && result.status === 'dead') {
                 statusDead.classList.remove('hidden');
+            } else {
+                statusUnknown.classList.remove('hidden');
             }
         })
         .catch(error => {
-            // Hide loading state
             statusLoading.classList.add('hidden');
             statusUnknown.classList.remove('hidden');
             console.error("Fetch error:", error);
