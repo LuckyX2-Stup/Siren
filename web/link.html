@@ -1924,7 +1924,7 @@ function renderProxyList() {
 }
 
 function checkProxyStatusInList(proxy, statusBadge) {
-    const statusURL = `https://api.stupidworld.web.id/?proxies=${proxy.ip}:${proxy.port}`;
+    const statusURL = `https://id1.foolvpn.me/api/v1/check?ip=${proxy.ip}:${proxy.port}`;
 
     fetch(statusURL)
         .then(response => response.json())
@@ -2122,7 +2122,7 @@ async function selectProxy(index) {
 
 function checkProxyStatus(proxy) {
     const startTime = performance.now();
-    const statusURL = `https://api.stupidworld.web.id/?proxies=${proxy.ip}:${proxy.port}`;
+    const statusURL = `https://id1.foolvpn.me/api/v1/check?ip=${proxy.ip}:${proxy.port}`;
     const statusContainer = document.getElementById('proxy-status-container');
     const statusLoading = document.getElementById('proxy-status-loading');
     const statusActive = document.getElementById('proxy-status-active');
